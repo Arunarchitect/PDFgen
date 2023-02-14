@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Generate PDF Report</title>
+    <title>Home</title>
 </head>
 <body>
-    <h1 style="background-color: blue; color: aliceblue;">Generate PDF Report</h1>
-    <form method="POST" action="{% url 'home' %}">
+    <h1>Report Generator</h1>
+    <form method="POST">
         {% csrf_token %}
         <label for="name">Name:</label>
-        <input type="text" name="name" id="name"><br><br>
+        <input type="text" id="name" name="name" required><br><br>
         <label for="age">Age:</label>
-        <input type="text" name="age" id="age"><br><br>
+        <input type="number" id="age" name="age" required><br><br>
         <label for="marks">Marks:</label>
-        <input type="text" name="marks" id="marks"><br><br>
+        <input type="number" id="marks" name="marks" required><br><br>
         <button type="submit">Generate Report</button>
     </form>
 </body>

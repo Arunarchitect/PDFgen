@@ -1,6 +1,9 @@
-from django.shortcuts import render
+import os
+import pdfkit
 from django.http import HttpResponse
-from reportlab.pdfgen import canvas
+from django.shortcuts import render, redirect
+from django.urls import reverse
+
 def home(request):
     if request.method == 'POST':
         # Get data from the form
@@ -11,24 +14,31 @@ def home(request):
         # Calculate product of marks and age
         product = age * marks
 
-        # Generate the PDF report
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+        # Render the HTML template
+        context = {'name': name, 'age': age, 'marks': marks, 'product': product}
+        html = render(request, 'report.html', context).content.decode('utf-8')
 
-        # Create the PDF object, using the response object as its "file."
-        p = canvas.Canvas(response)
+        # Write the HTML to a file
+        with open('report.html', 'w') as f:
+            f.write(html)
 
-        # Draw things on the PDF. Here's where the PDF generation happens.
-        # See the ReportLab documentation for the full list of functionality.
-        p.drawString(100, 800, "Name: {}".format(name))
-        p.drawString(100, 780, "Age: {}".format(age))
-        p.drawString(100, 760, "Marks: {}".format(marks))
-        p.drawString(100, 740, "Product: {}".format(product))
-
-        # Close the PDF object cleanly, and we're done.
-        p.showPage()
-        p.save()
-
-        return response
+        # Redirect to the PDF preview page
+        return redirect(reverse('preview'))
 
     return render(request, 'home.html')
+
+def preview(request):
+    # Generate the PDF report
+    pdfkit.from_file('report.html', 'report.pdf')
+
+    # Read the PDF file into a byte array
+    with open('report.pdf', 'rb') as f:
+        pdf_data = f.read()
+
+    # Delete the PDF file from disk
+    os.remove('report.pdf')
+
+    # Return the PDF data as a response
+    response = HttpResponse(pdf_data, content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="report.pdf"'
+    return response
