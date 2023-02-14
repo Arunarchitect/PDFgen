@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate PDF Report</title>
+</head>
+<body>
+    <h1 style="background-color: blue; color: aliceblue;">Generate PDF Report</h1>
+    <form method="POST" action="{% url 'home' %}">
+        {% csrf_token %}
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name"><br><br>
+        <label for="age">Age:</label>
+        <input type="text" name="age" id="age"><br><br>
+        <label for="marks">Marks:</label>
+        <input type="text" name="marks" id="marks"><br><br>
+        <button type="submit">Generate Report</button>
+    </form>
+</body>
+</html>
